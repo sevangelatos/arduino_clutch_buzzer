@@ -17,7 +17,7 @@ unsigned grace_time_ms;
 unsigned long timeout_time;
 
 void setup() {
-  // Onboard LED mirrors the tone output
+  // Onboard LED mirrors the clutch input
   pinMode(LED_BUILTIN, OUTPUT);
   // We use pin 3 as input
   pinMode(CLUTCH_PIN, INPUT);
@@ -29,20 +29,19 @@ void setup() {
 void buzz(bool on) {
   if (on) {
     tone(SPEAKER_PIN, 1000);
-    digitalWrite(LED_BUILTIN, HIGH);
   }
   else {
     noTone(SPEAKER_PIN);
-    digitalWrite(LED_BUILTIN, LOW);
   }
 }
 
 bool isClutchIn() {
   // To avoid spurious activations read twice
-  bool in1 = digitalRead(CLUTCH_PIN) == LOW;
+  const int in1 = digitalRead(CLUTCH_PIN);
+  digitalWrite(LED_BUILTIN, in1);
   delay(10);
-  bool in2 = digitalRead(CLUTCH_PIN) == LOW;
-  return in1 && in2;
+  const int in2 = digitalRead(CLUTCH_PIN);
+  return in1 == HIGH && in2 == HIGH;
 }
 
 void loop() {
